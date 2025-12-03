@@ -1,0 +1,35 @@
+name: Auto Project Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      idea:
+        description: "اكتب فكرة المشروع"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install node-fetch
+
+      - name: Run DeepSeek
+        run: node deepseek.js "${{ github.event.inputs.idea }}"
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+
+      - name: Commit files
+        run: |
+          git config --global user.name "AI Builder"
+          git config --global user.email "ai@builder.com"
+          git add .
+          git commit -m "Auto AI Generated Project"
+          git push
