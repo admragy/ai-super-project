@@ -2,31 +2,31 @@ name: Auto Project Builder
 
 on:
   workflow_dispatch:
-    inputs:
-      idea:
-        description: "اكتب فكرة المشروع"
-        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
       - name: Install dependencies
         run: npm install node-fetch
 
-      - name: Run DeepSeek
-        run: node deepseek.js "${{ github.event.inputs.idea }}"
+      - name: Read prompt and run DeepSeek
+        run: |
+          IDEA=$(cat prompt.txt)
+          node deepseek.js "$IDEA"
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
 
-      - name: Commit files
+      - name: Commit generated files
         run: |
           git config --global user.name "AI Builder"
           git config --global user.email "ai@builder.com"
