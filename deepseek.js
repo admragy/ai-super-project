@@ -3,18 +3,24 @@ import fs from "fs";
 import path from "path";
 
 const idea = process.argv.slice(2).join(" ");
-const API_KEY = process.env.AI_API_KEY;
+const API_KEY = process.env.KIMI_API_KEY;
 
-if (!API_KEY || !idea) { console.error("Missing data"); process.exit(1); }
+if (!API_KEY || !idea) { 
+  console.error("Missing Kimi API key or idea"); 
+  process.exit(1); 
+}
 
 const rules = fs.readFileSync("rules.txt", "utf8");
 
 async function run() {
-  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+  const res = await fetch("https://api.kimi.com/v1/chat/completions", {
     method: "POST",
-    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json" },
+    headers: { 
+      "Authorization": `Bearer ${API_KEY}`, 
+      "Content-Type": "application/json" 
+    },
     body: JSON.stringify({
-      model: "deepseek-chat",
+      model: "kimi-chat",
       messages: [
         { role: "system", content: rules },
         { role: "user", content: idea }
